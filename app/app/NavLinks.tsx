@@ -3,7 +3,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type L = { href: string; label: string; icon: string };
-const MAIN: L[] = [{ href: "/app", label: "Cenas", icon: "▶" }];
+const MAIN: L[] = [
+  { href: "/app", label: "Cenas", icon: "▶" },
+  { href: "/app/fotos", label: "Minhas fotos", icon: "▦" },
+];
 const TOOLS: L[] = [{ href: "/app/avatar", label: "Criar avatar", icon: "◐" }];
 const ADMIN: L = { href: "/app/admin", label: "Convites", icon: "⚿" };
 

@@ -183,3 +183,29 @@ create policy "admin update preview files" on storage.objects for update to auth
   using (bucket_id = 'previews' and (select private.is_admin()));
 create policy "admin delete preview files" on storage.objects for delete to authenticated
   using (bucket_id = 'previews' and (select private.is_admin()));
+
+-- ───────── Minhas fotos (modelos e produtos de cada usuário)
+create table public.assets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  kind text not null check (kind in ('model','product')),
+  name text not null check (char_length(name) between 1 and 80),
+  paths text[] not null default '{}' check (cardinality(paths) <= 4),
+  created_at timestamptz not null default now()
+);
+create index assets_user_kind_idx on public.assets(user_id, kind, created_at desc);
+alter table public.assets enable row level security;
+revoke all on public.assets from anon;
+create policy "own assets read" on public.assets for select to authenticated using (user_id = (select auth.uid()) and (select private.is_approved()));
+create policy "own assets insert" on public.assets for insert to authenticated with check (user_id = (select auth.uid()) and (select private.is_approved()));
+create policy "own assets update" on public.assets for update to authenticated using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+create policy "own assets delete" on public.assets for delete to authenticated using (user_id = (select auth.uid()));
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('assets', 'assets', false, 10485760, array['image/jpeg','image/png','image/webp']) on conflict (id) do nothing;
+create policy "own asset files read" on storage.objects for select to authenticated
+  using (bucket_id = 'assets' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "own asset files insert" on storage.objects for insert to authenticated
+  with check (bucket_id = 'assets' and (storage.foldername(name))[1] = (select auth.uid())::text and (select private.is_approved()));
+create policy "own asset files delete" on storage.objects for delete to authenticated
+  using (bucket_id = 'assets' and (storage.foldername(name))[1] = (select auth.uid())::text);

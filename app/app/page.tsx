@@ -1,5 +1,6 @@
 import { SCENES, SETTINGS } from "@/lib/prompts/data";
 import { requireMember, supabaseServer } from "@/lib/supabase/server";
+import { getMyAssets } from "@/lib/assets";
 import { Gallery } from "./Gallery";
 
 export const metadata = { title: "Cenas · Cena Pronta" };
@@ -17,5 +18,6 @@ export default async function CenasPage() {
       if (s.signedUrl) previews[rows[i].scene_id] = s.signedUrl;
     });
   }
-  return <Gallery scenes={SCENES} settings={SETTINGS} previews={previews} isAdmin={member.role === "admin"} />;
+  const assets = await getMyAssets();
+  return <Gallery scenes={SCENES} settings={SETTINGS} previews={previews} assets={assets} isAdmin={member.role === "admin"} />;
 }

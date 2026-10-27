@@ -65,3 +65,101 @@ export function buildPrompt(scene: SceneCard, settings: Setting[], o: BuildOptio
     `AVOID: changing her face or body, changing the product design or color, text on screen, watermarks, extra people, morphing, distorted hands, warped mirror reflections, cartoon or CGI look.`,
   ].join("\n");
 }
+
+/* ───────── Modo 2 passos: 1) imagem do primeiro frame  2) animação desse frame ───────── */
+
+export function buildMergePrompt(scene: SceneCard, settings: Setting[], o: BuildOptions) {
+  const product = clean(o.product, 100);
+  const setting =
+    o.settingId === "ref"
+      ? "the same environment shown in the person's reference photos (if none is shown, use: " + scene.setting + ")"
+      : settings.find((x) => x.id === o.settingId)?.prompt ?? scene.setting;
+  return [
+    `Create ONE photorealistic vertical 9:16 image that looks like a real smartphone photo, the first frame of a TikTok video.`,
+    ``,
+    `REFERENCE IMAGES — use all attached images together:`,
+    `• Photos of the woman = her exact identity: same face, facial features, skin tone, hair, body shape and proportions. Do not beautify, slim or change her.`,
+    `• Photos of the product${product ? ` (${product})` : ""} = the exact product: same color, fabric, texture, print, cut, length, seams, details and logos. No redesign.`,
+    ``,
+    `SCENE: ${KIND[scene.kind]}. ${scene.beats[0]}.`,
+    `SETTING: ${setting}.`,
+    `CAMERA: ${scene.camera}.`,
+    scene.back
+      ? `The FRONT of the product must be fully visible and in sharp focus in this image.`
+      : `The product must be fully visible and in sharp focus.`,
+    ``,
+    `STYLE: authentic UGC phone photo, natural light, real skin texture with pores, natural fabric folds, slight phone-camera grain.`,
+    `AVOID: text, watermark, extra fingers, distorted hands, duplicated product, warped mirror reflection, plastic skin, CGI look.`,
+  ].join("\n");
+}
+
+export function buildMotionFromFrame(scene: SceneCard, o: BuildOptions) {
+  const line = clean(o.line, 160);
+  const t = o.seconds === 10 ? ["0–3s", "3–6s", "6–8s", "8–10s"] : ["0–2s", "2–4s", "4–6s", "6–8s"];
+  const audio =
+    o.speech === "none"
+      ? "AUDIO: no dialogue and no voice. Only subtle natural room ambience. No music, no subtitles."
+      : `DIALOGUE: she speaks in Brazilian Portuguese (pt-BR) with a native Brazilian accent, ${TONE[o.speech]}, perfect lip-sync. She says exactly: "${line || "Gente, olha que perfeito isso aqui!"}"\nAUDIO: clear voice captured by a phone microphone, subtle room tone, no music, no subtitles.`;
+  return [
+    `Animate the provided starting image into a ${o.seconds}-second vertical 9:16 video, photorealistic, authentic TikTok UGC filmed on a smartphone.`,
+    ``,
+    `Keep the woman's face, hair, body and the product 100% identical to the starting image in every frame. No morphing, no redesign of the product.`,
+    scene.back
+      ? `When she turns, the BACK of the product must look consistent with the product reference (same color, fabric and details), fully visible and in focus.`
+      : ``,
+    `CAMERA: ${scene.camera}.`,
+    ``,
+    `ACTION:`,
+    `• ${t[0]}: ${scene.beats[0]}.`,
+    `• ${t[1]}: ${scene.beats[1]}.`,
+    `• ${t[2]}: ${scene.beats[2]}.`,
+    `• ${t[3]}: ${scene.beats[3]}.`,
+    ``,
+    audio,
+    ``,
+    `STYLE: natural human motion, realistic hands with five fingers, believable fabric and hair physics, casual amateur framing.`,
+    `AVOID: face or body changes, product changes, text on screen, watermarks, extra people, distorted hands, cartoon or CGI look.`,
+  ]
+    .filter((l, i, a) => !(l === "" && a[i - 1] === ""))
+    .join("\n");
+}
+
+/* ───────── Legenda + hashtags ───────── */
+const BASE_TAGS = ["#tiktokshop", "#achadinhos", "#achadinhosdotiktok", "#comprinhas", "#valeapena"];
+const KIND_TAGS: Record<SceneCard["kind"], string[]> = {
+  wear: ["#lookdodia", "#modafeminina", "#provador", "#outfit"],
+  accessory: ["#acessorios", "#semijoias", "#bolsa", "#lookdodia"],
+  apply: ["#maquiagem", "#skincare", "#beleza", "#make"],
+  hold: ["#recebidos", "#testei", "#review", "#indicacao"],
+};
+const CAPTIONS: Record<SceneCard["kind"], string[]> = {
+  wear: [
+    "O caimento desse {p} é outra coisa 😍 link no carrinho laranja 🧡",
+    "Provando o {p} do TikTok Shop: aprovado ou reprovado? 👀",
+    "Achei o {p} que todo mundo tá pedindo, corre no carrinho 🛒",
+  ],
+  accessory: [
+    "Detalhe que muda o look inteiro ✨ {p} no carrinho laranja",
+    "O {p} mais lindo que achei no TikTok Shop 🤍",
+    "Parece caro, mas é achadinho 🫣 {p} no carrinho",
+  ],
+  apply: [
+    "Testei o {p} viral e olha o resultado 😮",
+    "Uma passada só 💄 {p} no carrinho laranja",
+    "Entrou pra minha rotina: {p} ✨",
+  ],
+  hold: [
+    "Chegou e eu amei 😍 {p} no carrinho laranja",
+    "Review sincero do {p} 👀 vale a pena?",
+    "Achadinho que vale cada centavo: {p} 🛒",
+  ],
+};
+
+export function buildCaptions(scene: SceneCard, productRaw: string) {
+  const raw = clean(productRaw, 100);
+  const p = raw ? (/^[A-ZÀ-Ý][a-zà-ÿ]/.test(raw) ? raw[0].toLowerCase() + raw.slice(1) : raw) : "produto";
+  return {
+    captions: CAPTIONS[scene.kind].map((c) => c.replaceAll("{p}", p)),
+    hashtags: [...BASE_TAGS, ...KIND_TAGS[scene.kind]].join(" "),
+  };
+}

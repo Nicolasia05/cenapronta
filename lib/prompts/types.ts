@@ -25,3 +25,5 @@ export type BuildOptions = {
   line: string;
   seconds: 8 | 10;
 };
+
+export type Asset = { id: string; kind: "model" | "product"; name: string; urls: string[] };
