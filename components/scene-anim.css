@@ -1,0 +1,137 @@
+.sa { width: 100%; height: 100%; display: block; }
+.sa * { transform-box: fill-box; }
+.sa .sa-fig { transform-origin: 50% 100%; }
+.sa .sa-cam { transform-box: view-box; transform-origin: 45px 146px; }
+.sa .sa-armR { transform-origin: 0% 0%; }
+.sa .sa-armL { transform-origin: 100% 0%; }
+.sa .sa-hairback { transform-origin: 50% 0%; }
+.sa .sa-legs { transform-origin: 50% 0%; }
+
+:root { --sa-t: 4s; }
+.sa .sa-fig, .sa .sa-cam, .sa .sa-armR, .sa .sa-armL, .sa .sa-mark, .sa .sa-hairback, .sa .sa-legs,
+.sa .sa-flash, .sa .sa-spark, .sa .sa-mistdots, .sa .sa-waves, .sa .sa-lid, .sa .sa-item, .sa .sa-dress,
+.sa .sa-curtain-l, .sa .sa-curtain-r, .sa .sa-hanger, .sa .sa-bag, .sa .sa-glow {
+  animation-duration: var(--sa-t);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+/* giro: frente → lado → costas → frente */
+@keyframes sa-spin { 0%, 15% { transform: scaleX(1); } 35% { transform: scaleX(0.25); } 50%, 62% { transform: scaleX(-1); } 82% { transform: scaleX(0.25); } 100% { transform: scaleX(1); } }
+@keyframes sa-back { 0%, 30% { opacity: 1; } 36%, 78% { opacity: 0; } 84%, 100% { opacity: 1; } }
+.sa-spin .sa-fig { animation-name: sa-spin; transform-origin: 50% 50%; }
+.sa-spin .sa-mark { animation-name: sa-back; }
+.sa-transition .sa-fig { animation-name: sa-spin; transform-origin: 50% 50%; }
+@keyframes sa-swap { 0%, 34% { fill: #4a4a58; } 40%, 100% { fill: var(--color-volt); } }
+.sa-transition .sa-dress { animation-name: sa-swap; }
+
+/* mexendo no cabelo */
+@keyframes sa-hairarm { 0%, 8% { transform: rotate(0); } 25%, 45% { transform: rotate(-150deg); } 60%, 100% { transform: rotate(0); } }
+@keyframes sa-hairsway { 0%, 25% { transform: rotate(0); } 35% { transform: rotate(8deg); } 45% { transform: rotate(-6deg); } 55%, 100% { transform: rotate(0); } }
+.sa-hair .sa-armR { animation-name: sa-hairarm; }
+.sa-hair .sa-hairback { animation-name: sa-hairsway; }
+.sa-hair .sa-fig { animation-name: sa-halfturn; transform-origin: 50% 50%; }
+@keyframes sa-halfturn { 0%, 60% { transform: scaleX(1); } 72% { transform: scaleX(-0.6); } 84% { transform: scaleX(-0.6); } 96%, 100% { transform: scaleX(1); } }
+
+/* arrumando a roupa: mão no ombro → cintura → barra */
+@keyframes sa-adjust { 0% { transform: rotate(0); } 20% { transform: rotate(-120deg); } 40% { transform: rotate(-35deg); } 60% { transform: rotate(-10deg); } 75%, 100% { transform: rotate(0); } }
+.sa-adjust .sa-armR, .sa-adjust .sa-armL { animation-name: sa-adjust; }
+.sa-adjust .sa-armL { animation-direction: reverse; }
+
+/* passando a mão / puxando o tecido */
+@keyframes sa-smooth { 0%, 10% { transform: rotate(-60deg); } 50% { transform: rotate(-8deg); } 70% { transform: rotate(-2deg) translateY(2px); } 100% { transform: rotate(-60deg); } }
+.sa-smooth .sa-armL { animation-name: sa-smooth; }
+.sa-smooth .sa-fig { animation-name: sa-halfturn; transform-origin: 50% 50%; }
+
+/* flash: poses com flash */
+@keyframes sa-flash { 0%, 2% { opacity: 0; } 4% { opacity: .9; } 10%, 30% { opacity: 0; } 32% { opacity: .9; } 38%, 62% { opacity: 0; } 64% { opacity: .9; } 70%, 100% { opacity: 0; } }
+@keyframes sa-poses { 0%, 28% { transform: translateX(0) rotate(0); } 32%, 60% { transform: translateX(-2px) rotate(-3deg); } 64%, 90% { transform: scaleX(-1); } 100% { transform: none; } }
+.sa-flash .sa-flash { animation-name: sa-flash; }
+.sa-flash .sa-fig { animation-name: sa-poses; transform-origin: 50% 50%; }
+
+/* sentando e levantando */
+@keyframes sa-sit { 0%, 15% { transform: translateY(0); } 40%, 60% { transform: translateY(16px); } 85%, 100% { transform: translateY(0); } }
+@keyframes sa-legs { 0%, 15% { transform: scaleY(1); } 40%, 60% { transform: scaleY(0.45); } 85%, 100% { transform: scaleY(1); } }
+.sa-sit .sa-fig { animation-name: sa-sit; }
+.sa-sit .sa-legs { animation-name: sa-legs; }
+
+/* caminhando até a câmera */
+@keyframes sa-walk { 0% { transform: translateY(-14px) scale(0.72); } 50% { transform: translateY(0) scale(1.02); } 60% { transform: scale(1.02); } 75% { transform: scaleX(-1.02) scaleY(1.02); } 100% { transform: translateY(-14px) scaleX(-0.72) scaleY(0.72); } }
+@keyframes sa-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+.sa-walk .sa-cam { animation-name: sa-walk; }
+.sa-walk .sa-fig { animation-name: sa-bob; animation-duration: .5s; }
+
+/* olhando por cima do ombro: começa de costas */
+@keyframes sa-shoulder { 0%, 35% { transform: scaleX(-1); } 60%, 100% { transform: scaleX(1); } }
+@keyframes sa-shouldermark { 0%, 45% { opacity: 0; } 55%, 100% { opacity: 1; } }
+.sa-shoulder .sa-fig { animation-name: sa-shoulder; transform-origin: 50% 50%; }
+.sa-shoulder .sa-mark { animation-name: sa-shouldermark; }
+
+/* provador: cortina abre */
+@keyframes sa-curl { 0%, 15% { transform: translateX(0); } 40%, 85% { transform: translateX(-30px); } 100% { transform: translateX(0); } }
+@keyframes sa-curr { 0%, 15% { transform: translateX(0); } 40%, 85% { transform: translateX(30px); } 100% { transform: translateX(0); } }
+.sa-curtain .sa-curtain-l { animation-name: sa-curl; }
+.sa-curtain .sa-curtain-r { animation-name: sa-curr; }
+.sa-curtain .sa-fig { animation-name: sa-spin; transform-origin: 50% 50%; animation-delay: .4s; }
+
+/* close no tecido */
+@keyframes sa-zoom { 0% { transform: scale(1); } 30% { transform: scale(2.2) translate(0, 4px); } 65% { transform: scale(2.2) translate(-4px, -10px); } 100% { transform: scale(1); } }
+.sa-zoom .sa-cam { animation-name: sa-zoom; transform-origin: 45px 80px; }
+
+/* cabide → vestida */
+@keyframes sa-hanger { 0%, 10% { opacity: 1; transform: scaleX(1); } 25% { transform: scaleX(-1); } 40% { opacity: 1; transform: scaleX(1); } 48%, 100% { opacity: 0; } }
+@keyframes sa-appear { 0%, 45% { opacity: 0; } 55%, 100% { opacity: 1; } }
+.sa-hanger .sa-hanger { animation-name: sa-hanger; transform-origin: 50% 50%; }
+.sa-hanger .sa-cam { animation-name: sa-appear; }
+
+/* colar / brinco: zoom + brilho */
+@keyframes sa-zneck { 0%, 100% { transform: scale(2.6); } 50% { transform: scale(2.8); } }
+@keyframes sa-zear { 0%, 100% { transform: scale(3); } 50% { transform: scale(3.15); } }
+@keyframes sa-spark { 0%, 40% { opacity: 0; transform: scale(.4); } 55% { opacity: 1; transform: scale(1); } 75%, 100% { opacity: 0; transform: scale(.4); } }
+@keyframes sa-touch { 0%, 20% { transform: rotate(0); } 45%, 65% { transform: rotate(-160deg); } 90%, 100% { transform: rotate(0); } }
+.sa-necklace .sa-cam { animation-name: sa-zneck; transform-origin: 45px 62px; }
+.sa-earring .sa-cam { animation-name: sa-zear; transform-origin: 52px 42px; }
+.sa-necklace .sa-spark, .sa-earring .sa-spark { animation-name: sa-spark; transform-origin: 50% 50%; }
+.sa-necklace .sa-armR, .sa-earring .sa-armR { animation-name: sa-touch; }
+
+/* bolsa */
+@keyframes sa-bag { 0%, 20% { transform: rotate(0); } 40% { transform: rotate(-14deg); } 55% { transform: scaleX(-1); } 75%, 100% { transform: rotate(0); } }
+.sa-bag .sa-bag { animation-name: sa-bag; transform-origin: 0% 0%; }
+
+/* batom / skincare / perfume: mão ao rosto */
+@keyframes sa-toface { 0%, 10% { transform: rotate(0); } 35%, 75% { transform: rotate(-146deg); } 100% { transform: rotate(0); } }
+@keyframes sa-showprod { 0%, 100% { transform: rotate(0); } 40%, 70% { transform: rotate(55deg); } }
+.sa-talk .sa-armL { animation-name: sa-showprod; }
+@keyframes sa-zface { 0%, 100% { transform: scale(2.2); } 50% { transform: scale(2.3); } }
+@keyframes sa-glow { 0%, 40% { opacity: 0; } 60% { opacity: .18; } 80%, 100% { opacity: 0; } }
+@keyframes sa-mist { 0%, 35% { opacity: 0; transform: translate(0, 0); } 50% { opacity: 1; } 75%, 100% { opacity: 0; transform: translate(-8px, -6px); } }
+.sa-lipstick .sa-armR, .sa-dab .sa-armR, .sa-mist .sa-armR { animation-name: sa-toface; }
+.sa-lipstick .sa-cam, .sa-dab .sa-cam { animation-name: sa-zface; transform-origin: 45px 50px; }
+.sa-lipstick .sa-glow, .sa-dab .sa-glow { animation-name: sa-glow; }
+.sa-mist .sa-mistdots { animation-name: sa-mist; }
+
+/* falando com a câmera */
+@keyframes sa-talk { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-1px) rotate(-1deg); } 75% { transform: translateY(-1px) rotate(1deg); } }
+@keyframes sa-waves { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+@keyframes sa-phoneup { 0%, 100% { transform: rotate(-150deg); } 40%, 60% { transform: rotate(-138deg); } }
+.sa-talk .sa-fig { animation-name: sa-talk; transform-origin: 50% 100%; }
+.sa-talk .sa-waves { animation-name: sa-waves; animation-duration: 1s; }
+.sa-talk .sa-armR { animation-name: sa-phoneup; }
+
+/* abrindo o pacote */
+@keyframes sa-lid { 0%, 20% { transform: rotate(0); } 40%, 85% { transform: rotate(-70deg); } 100% { transform: rotate(0); } }
+@keyframes sa-item { 0%, 35% { transform: translateY(14px); opacity: 0; } 55%, 85% { transform: translateY(-22px); opacity: 1; } 100% { transform: translateY(14px); opacity: 0; } }
+.sa-unbox .sa-lid { animation-name: sa-lid; transform-origin: 0% 100%; }
+.sa-unbox .sa-item { animation-name: sa-item; }
+.sa-unbox .sa-cam { transform: scale(.8); transform-origin: 45px 20px; }
+
+/* dancinha */
+@keyframes sa-dance { 0%, 100% { transform: rotate(0) translateY(0); } 15% { transform: rotate(-5deg) translateY(-2px); } 30% { transform: rotate(5deg) translateY(0); } 45% { transform: rotate(-4deg) translateY(-2px); } 60% { transform: scaleX(-1); } 75% { transform: rotate(4deg); } 90% { transform: rotate(-2deg) translateY(-1px); } }
+@keyframes sa-dancearm { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-70deg); } 50% { transform: rotate(-20deg); } 75% { transform: rotate(-90deg); } }
+.sa-dance .sa-fig { animation-name: sa-dance; transform-origin: 50% 50%; }
+.sa-dance .sa-armR { animation-name: sa-dancearm; }
+.sa-dance .sa-armL { animation-name: sa-dancearm; animation-direction: reverse; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sa * { animation: none !important; }
+}
