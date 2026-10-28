@@ -96,6 +96,8 @@ function PromptSheet({
     speech: scene.talk ? "natural" : "none",
     line: "",
     seconds: 10,
+    framing: "scene",
+    pov: "mostrar",
   });
   const [mode, setMode] = useState<"direto" | "2passos">("direto");
   const [modelId, setModelId] = useState("");
@@ -178,6 +180,25 @@ function PromptSheet({
             </label>
           </div>
 
+          <div>
+            <p className="eyebrow mb-2">Enquadramento</p>
+            <div className="flex flex-wrap gap-2">
+              {([["scene", "Padrão da cena"], ["full", "Corpo inteiro"], ["neck", "Pescoço pra baixo (só o look)"], ["pov", "POV (produto na mão)"]] as const).map(([v, l]) => (
+                <button key={v} className="chip" data-on={o.framing === v} onClick={() => setO({ ...o, framing: v })}>{l}</button>
+              ))}
+            </div>
+            {o.framing === "pov" && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {([["mostrar", "Mostrando"], ["abrir", "Abrindo"], ["apontar", "Apontando"], ["esticar", "Esticando"]] as const).map(([v, l]) => (
+                  <button key={v} className="chip" data-on={o.pov === v} onClick={() => setO({ ...o, pov: v })}>{l}</button>
+                ))}
+              </div>
+            )}
+            {(o.framing === "neck" || o.framing === "pov") && (
+              <p className="mt-2 text-xs text-mute">O rosto não aparece: basta uma foto do corpo da modelo. Se tiver fala, vira narração.</p>
+            )}
+          </div>
+
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
             <div>
               <p className="eyebrow mb-2">Duração</p>
@@ -220,8 +241,8 @@ function PromptSheet({
             <PromptBox title="Prompt pro Flow" hint="Ingredients to Video · anexe as fotos da modelo + produto" text={prompt} />
           ) : (
             <>
-              <PromptBox title="① Prompt da imagem (mesclagem)" hint="Gere a imagem anexando as fotos da modelo + produto. Escolha a melhor." text={merge} />
-              <PromptBox title="② Prompt do movimento" hint="Frames to Video · use a imagem escolhida como frame inicial" text={motion} />
+              <PromptBox title="Prompt do movimento" hint="Frames to Video · use a imagem inicial (gerada com o prompt abaixo) como primeiro frame" text={motion} />
+              <PromptBox title="Imagem inicial (mesclagem)" hint={o.framing === "neck" || o.framing === "pov" ? "Anexe até 3 fotos do produto + 1 foto do corpo da modelo (sem rosto)" : "Anexe até 3 fotos do produto + 1 foto da modelo (rosto e/ou corpo)"} text={merge} />
             </>
           )}
 
@@ -244,7 +265,7 @@ function PromptSheet({
           <div className="rounded-xl border border-line bg-ink-2 p-4 text-sm text-soft">
             <p className="eyebrow mb-2">Fotos pra anexar</p>
             <ul className="space-y-1.5">
-              <li>① 1 ou 2 fotos da modelo (rosto bem visível, corpo inteiro ajuda).</li>
+              <li>{o.framing === "neck" || o.framing === "pov" ? "① 1 foto do corpo da modelo (o rosto não aparece)." : "① 1 ou 2 fotos da modelo (rosto bem visível, corpo inteiro ajuda)."}</li>
               <li>② Foto do produto de <b className="text-bone">frente</b>{scene.back && <> e de <b className="text-bone">costas</b></>}.</li>
               <li className="text-mute">Se o Flow limitar a quantidade de imagens, junte frente e costas do produto numa imagem só, lado a lado.</li>
             </ul>
@@ -252,7 +273,7 @@ function PromptSheet({
         </div>
 
         <div className="flex gap-3 border-t border-line p-4">
-          <CopyButton text={mode === "direto" ? prompt : merge} label={mode === "direto" ? "Copiar prompt" : "Copiar prompt ①"} className="flex-1 !py-3 !text-sm" />
+          <CopyButton text={mode === "direto" ? prompt : motion} label={mode === "direto" ? "Copiar prompt" : "Copiar movimento"} className="flex-1 !py-3 !text-sm" />
           <a href={FLOW_URL} target="_blank" rel="noopener noreferrer" className="btn-volt flex flex-1 items-center justify-center py-3 text-sm">Abrir o Flow ↗</a>
         </div>
       </div>

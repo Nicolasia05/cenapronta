@@ -8,7 +8,8 @@ de 8 ou 10 segundos, pensado para usar com as fotos de referência da modelo e d
 
 - **31 cenas** em 6 grupos (Espelho, Look em movimento, Detalhes do produto, Acessórios & beleza, Falando com a câmera, Dancinha & trend)
 - Prompt montado na hora: produto, cenário, duração e fala em PT-BR opcionais
-- Modo **direto** (1 prompt) ou **2 passos** (imagem de mesclagem → animação), com legendas e hashtags
+- Modo **direto** (1 prompt) ou **2 passos** (prompt de movimento + imagem inicial de mesclagem), com legendas e hashtags
+- Enquadramento: padrão da cena, corpo inteiro, pescoço pra baixo (sem rosto) ou POV com o produto na mão (mostrando, abrindo, apontando, esticando)
 - **Minhas fotos**: cada usuário salva modelos e produtos (até 4 fotos) e baixa direto na hora de montar a cena
 - Prévia animada (silhueta em SVG) em cada cena; o admin pode subir o vídeo real que substitui a animação
 - Criador de avatar (retrato, ficha de referência em 4 ângulos e foto lifestyle)

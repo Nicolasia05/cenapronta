@@ -24,6 +24,8 @@ export type BuildOptions = {
   speech: "none" | "natural" | "animada" | "sussurro";
   line: string;
   seconds: 8 | 10;
+  framing: "scene" | "full" | "neck" | "pov";
+  pov: "mostrar" | "abrir" | "apontar" | "esticar";
 };
 
 export type Asset = { id: string; kind: "model" | "product"; name: string; urls: string[] };
